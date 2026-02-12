@@ -1,0 +1,10 @@
+{
+    "name": "Dimzki.Easybuildtool.Editor",
+    "references": [
+      "Dimzki.Easybuildtool"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}

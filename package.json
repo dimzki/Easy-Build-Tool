@@ -1,0 +1,14 @@
+{
+  "name": "com.alzaki.easybuildtool",
+  "displayName": "Easy Build Tool",
+  "version": "0.1.0",
+  "unity": "6000.3",
+  "unityRelease": "5f2",
+  "description": "Unity Editor build tool with platform selection, scene management, semantic versioning, and ZIP output support.",
+  "dependencies": {},
+  "author": {
+    "name": "Alzaki",
+    "url": "https://github.com/dimzki"
+  },
+  "documentationUrl": "https://github.com/dimzki/Easy-Build-Tool"
+}

@@ -11,6 +11,12 @@ namespace Dimzki.Easybuildtool.Editor
         private VersionManager _versionManager;
         private Vector2 _sceneListScrollPos;
 
+        private string _cachedGitHash;
+        private string _cachedBuildPath;
+        private string _lastSuffix;
+        private string _lastPlatform;
+        private string _lastVersion;
+
         [MenuItem("Build/Build Window")]
         public static void ShowWindow()
         {
@@ -23,6 +29,7 @@ namespace Dimzki.Easybuildtool.Editor
             _settings = BuildSettingsData.Load();
             _versionManager = new VersionManager();
             _versionManager.LoadFromConfig();
+            _cachedGitHash = GitHelper.GetShortCommitHash();
         }
 
         private void OnDisable()
@@ -279,12 +286,30 @@ namespace Dimzki.Easybuildtool.Editor
                     MessageType.Info);
             }
 
+            // Project name suffix
+            _settings.ProjectNameSuffix = EditorGUILayout.TextField("Project Name Suffix", _settings.ProjectNameSuffix);
+
+            // Rebuild path only when inputs change
+            string currentVersion = _versionManager.NewVersion.ToString();
+            string currentPlatform = _settings.SelectedPlatform.ToString();
+            if (_cachedBuildPath == null ||
+                _lastSuffix != _settings.ProjectNameSuffix ||
+                _lastPlatform != currentPlatform ||
+                _lastVersion != currentVersion)
+            {
+                _lastSuffix = _settings.ProjectNameSuffix;
+                _lastPlatform = currentPlatform;
+                _lastVersion = currentVersion;
+
+                string projectRoot = System.IO.Directory.GetParent(Application.dataPath).FullName;
+                string folderName = BuildExecutor.GenerateBuildFolderName(
+                    _versionManager.NewVersion, _settings.ProjectNameSuffix, _cachedGitHash);
+                _cachedBuildPath = System.IO.Path.Combine(projectRoot, "Builds", currentPlatform, folderName);
+            }
+
             // Build path display
-            string projectRoot = System.IO.Directory.GetParent(Application.dataPath).FullName;
-            string folderName = BuildExecutor.GenerateBuildFolderName(_versionManager.NewVersion);
-            string buildPath = System.IO.Path.Combine(projectRoot, "Builds", _settings.SelectedPlatform.ToString(), folderName);
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.TextField(buildPath);
+            EditorGUILayout.TextField(_cachedBuildPath);
             EditorGUI.EndDisabledGroup();
 
             EditorGUILayout.Space(4);
@@ -338,7 +363,8 @@ namespace Dimzki.Easybuildtool.Editor
                 _settings.DevelopmentBuild,
                 scenes,
                 _versionManager.NewVersion,
-                zip);
+                zip,
+                _settings.ProjectNameSuffix);
 
             if (success)
             {

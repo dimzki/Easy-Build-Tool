@@ -16,7 +16,8 @@ namespace Dimzki.Easybuildtool.Editor
             bool developmentBuild,
             string[] scenePaths,
             SemanticVersion version,
-            bool zipOutput)
+            bool zipOutput,
+            string projectNameSuffix = "")
         {
             BuildTarget target = BuildSettingsData.ToBuildTarget(platform);
             BuildTargetGroup targetGroup = BuildSettingsData.ToBuildTargetGroup(platform);
@@ -30,7 +31,7 @@ namespace Dimzki.Easybuildtool.Editor
                 return false;
             }
 
-            string folderName = GenerateBuildFolderName(version);
+            string folderName = GenerateBuildFolderName(version, projectNameSuffix);
             string productName = SanitizeProductName(PlayerSettings.productName);
             string extension = BuildSettingsData.GetExecutableExtension(platform);
 
@@ -89,18 +90,23 @@ namespace Dimzki.Easybuildtool.Editor
             return true;
         }
 
-        public static string GenerateBuildFolderName(SemanticVersion version)
+        public static string GenerateBuildFolderName(
+            SemanticVersion version, string projectNameSuffix = "", string cachedGitHash = null)
         {
             string productName = SanitizeProductName(PlayerSettings.productName);
+            string suffix = SanitizeProductName(projectNameSuffix);
             string versionStr = version.ToString();
             string dateStr = DateTime.Now.ToString("dd-MM-yyyy");
+            string shortHash = cachedGitHash ?? GitHelper.GetShortCommitHash();
 
-            string shortHash = GitHelper.GetShortCommitHash();
+            string baseName = string.IsNullOrEmpty(suffix)
+                ? productName
+                : $"{productName}_{suffix}";
 
             if (!string.IsNullOrEmpty(shortHash))
-                return $"{productName}_{versionStr}_{shortHash}_{dateStr}";
+                return $"{baseName}_{versionStr}_{shortHash}_{dateStr}";
 
-            return $"{productName}_{versionStr}_{dateStr}";
+            return $"{baseName}_{versionStr}_{dateStr}";
         }
 
         private static string SanitizeProductName(string name)

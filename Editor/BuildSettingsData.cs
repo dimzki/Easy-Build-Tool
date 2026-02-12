@@ -37,6 +37,7 @@ namespace Dimzki.Easybuildtool.Editor
         public BuildPlatformTarget SelectedPlatform = BuildPlatformTarget.Windows;
         public ScriptingImplementation ScriptingBackend = ScriptingImplementation.Mono2x;
         public bool DevelopmentBuild;
+        public string ProjectNameSuffix = "";
         public List<SceneEntry> Scenes = new List<SceneEntry>();
 
         private const string PREFS_KEY = "EasyBuildTool_BuildSettings";

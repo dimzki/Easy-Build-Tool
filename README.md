@@ -1,3 +1,5 @@
+<img width="761" height="683" alt="New Project (1)" src="https://github.com/user-attachments/assets/8679779e-130f-4ba2-a876-0540d77883cf" />
+
 # Easy Build Tool
 
 A Unity Editor build tool package with platform selection, scene management, semantic versioning, and ZIP output support.
